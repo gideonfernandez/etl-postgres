@@ -5,7 +5,7 @@ SHAREPOINT_SUBFOLDER = '/sites/MMGDataTeam/Shared%20Documents/General/Network Ni
 MMG_USER = 'gfernandez@montagemarketinggroup.com'
 MMG_PASSWORD = 'gf*2100ea'
 
-RECIPIENT = 'gideonfernandez@velocitysense.com'
+RECIPIENT = 'gideonfernandez@velocitysense.com, gfernandez@montagemarketinggroup.com, analytics@montagemarketinggroup.com'
 
 BITLY_LIST = [
 	'bit.ly/LA-GoldenChange',

@@ -35,7 +35,7 @@ def clear_nn_table():
 
         print('Removing NN data')
         cur.execute(
-        	'DELETE FROM dev.networkninja; COMMIT;'
+        	'DELETE FROM mmg.networkninja; COMMIT;'
         	)
 
         # close the communication with the PostgreSQL
@@ -61,8 +61,8 @@ def load_nn_table():
         # create a cursor
         cur = conn.cursor()
 
-        copy_command = f"COPY dev.networkninja FROM STDIN CSV HEADER;"
-        cur.copy_expert(copy_command, open(r'postgres/db_data/db_NN_load_dev.csv', "r"))
+        copy_command = f"COPY mmg.networkninja FROM STDIN CSV HEADER;"
+        cur.copy_expert(copy_command, open(r'postgres/db_data/db_NN_load.csv', "r"))
         cur.execute('COMMIT;')
 
         # close the communication with the PostgreSQL
@@ -88,7 +88,7 @@ def update_bitly_table():
         # create a cursor
         cur = conn.cursor()
 
-        copy_command = f"COPY dev.bitly FROM STDIN CSV HEADER;"
+        copy_command = f"COPY mmg.bitly FROM STDIN CSV HEADER;"
         cur.copy_expert(copy_command, open(r'postgres/db_data/db_bitly_load.csv', "r"))
         cur.execute('COMMIT;')
 
@@ -105,5 +105,5 @@ def update_bitly_table():
 clear_nn_table()
 time.sleep(5)
 load_nn_table()
-# time.sleep(5)
-# update_bitly_table()
+time.sleep(5)
+update_bitly_table()

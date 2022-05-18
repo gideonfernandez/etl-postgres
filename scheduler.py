@@ -14,12 +14,12 @@ def job():
     print('Starting Target Market Report...')
     time.sleep(5)
     exec(open('target_market.py').read())
-    print('Quant Report Done!')
+    print('Target Market Report Done!')
 
     # print('Starting Bitly Gather Updated Metrics Report...')
-    # time.sleep(5)
-    # exec(open('bitly_metrics.py').read())
-    # print('Bitly Metrics Captured!')
+    time.sleep(5)
+    exec(open('bitly_metrics.py').read())
+    print('Bitly Metrics Captured!')
 
     print('Starting Postgresql jobs...')
     time.sleep(5)
@@ -31,8 +31,7 @@ def job():
     exec(open('email_push.py').read())
     print('Email sent')
 
-# schedule.every().day.at('07:00').do(job)
-schedule.every().day.at('21:45').do(job)  #Time in UTC
+schedule.every().day.at('11:00').do(job)  #Time in UTC
 # schedule.every(45).seconds.do(job)
 
 while True:

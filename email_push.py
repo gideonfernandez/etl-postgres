@@ -1,4 +1,5 @@
 import smtplib
+from config import *
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta
@@ -12,7 +13,7 @@ username = MMG_USER
 password = MMG_PASSWORD
 mail_from = MMG_USER
 mail_to = RECIPIENT
-mail_subject = 'Database Successfully Completed - ' + today 
+mail_subject = 'MMG Database Successfully Updated - ' + today 
 mail_body = 'The database was successfully updated at ' + today
 
 try:
