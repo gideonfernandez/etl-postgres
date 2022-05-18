@@ -32,8 +32,8 @@ def job():
     print('Email sent')
 
 # schedule.every().day.at('07:00').do(job)
-schedule.every().day.at('21:15').do(job)  #Time in UTC
-# schedule.every(5).seconds.do(job)
+# schedule.every().day.at('21:15').do(job)  #Time in UTC
+schedule.every(45).seconds.do(job)
 
 while True:
     schedule.run_pending()
