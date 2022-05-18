@@ -1,0 +1,13 @@
+config.py
+
+__pycache__/
+*.pyc
+
+scratch.py
+database.ini
+
+archive/
+tmp/
+
+data/
+postgres/db_data
