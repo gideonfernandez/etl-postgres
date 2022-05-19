@@ -1,8 +1,6 @@
 import schedule
 import time
 import os
-import psycopg2
-from configparser import ConfigParser
 
 def job():
     '''Run scheduled job.'''
@@ -32,7 +30,7 @@ def job():
     print('Email sent')
 
 schedule.every().day.at('11:00').do(job)  #Time in UTC
-# schedule.every(45).seconds.do(job)
+# schedule.every(30).seconds.do(job)
 
 while True:
     schedule.run_pending()

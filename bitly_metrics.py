@@ -5,30 +5,21 @@ import itertools
 from config import *
 from itertools import product
 from datetime import datetime, timedelta
-from tzlocal import get_localzone
 
 # Runtime start
 startTime = datetime.now()
-
 DAY = timedelta(1)
-local_tz = get_localzone()   # get local timezone
-now = datetime.now(local_tz) # get timezone-aware datetime object
-naive = now.replace(tzinfo=None) - DAY # same time
-yesterday = now - DAY # exactly 24 hours ago, time may differ
 
 # EDIT here for manual run
 # START_DATE = datetime.strptime('2022-04-01 00:00:00', '%Y-%m-%d %H:%M:%S')
 
-# START DATE is 2 days minus the current day. Change the 2 to how many days back you want to go
-START_DATE = now.replace(tzinfo=None) - (DAY * 2)
+# START DATE is Yesterday. Multiply "DAY" times the # of days to go back
+START_DATE = NOW_TIME.replace(tzinfo=None) - DAY
 START_DATE = START_DATE.strftime("%Y-%m-%d")
-START_DATE = START_DATE + ' 00:00:00'
-START_DATE = datetime.strptime(START_DATE, '%Y-%m-%d %H:%M:%S')
+START_DATE, YDAY_END_DATE = START_DATE + ' 00:00:00', START_DATE + ' 23:59:59'
 
-# Naive End of Day is yesterday at 11:59:59PM ET
-naive_eod = naive.strftime("%Y-%m-%d")
-naive_eod = naive_eod + ' 23:59:59'
-naive_eod = datetime.strptime(naive_eod, '%Y-%m-%d %H:%M:%S')
+YDAY_START_DATE = datetime.strptime(START_DATE, '%Y-%m-%d %H:%M:%S')
+YDAY_END_DATE = datetime.strptime(YDAY_END_DATE, '%Y-%m-%d %H:%M:%S')
 
 headers = {
     'Authorization': 'Bearer ' + BITLY_TOKEN,
@@ -38,12 +29,12 @@ headers = {
 Bitly Metrics
 """
 bitly_date_list = []
-while START_DATE < naive_eod:
+while YDAY_START_DATE < YDAY_END_DATE:
 
-    bitly_date = START_DATE.strftime('%Y-%m-%d') + 'T15:00:00-0700'
+    bitly_date = YDAY_START_DATE.strftime('%Y-%m-%d') + 'T15:00:00-0700'
     bitly_date_list.append(bitly_date)
 
-    START_DATE += DAY
+    YDAY_START_DATE += DAY
 
 iterate_list = list(map(list, product(BITLY_LIST, bitly_date_list)))
 
@@ -125,9 +116,9 @@ bitly_metrics_tags_df = bitly_metrics_tags_df[[
 
 bitly_metrics_tags_df['Date'] = pd.to_datetime(bitly_metrics_tags_df['Date']).dt.date
 
-bitly_metrics_tags_df.to_csv(r'postgres/db_data/db_BITLY_load.csv', index=False, header=True)
+bitly_metrics_tags_df.to_csv(r'data/db/db_BITLY_load.csv', index=False, header=True)
 
-print('COMPLETED. Run time:', datetime.now() - startTime)
+print('Bitly capture COMPLETED. Run time:', datetime.now() - startTime)
 
 
 

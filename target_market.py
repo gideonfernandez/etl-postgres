@@ -474,5 +474,5 @@ database_df = database_df[[
     'State',
     ]].copy()
 
-database_df.to_csv(r'postgres/db_data/db_NN_load.csv', index=False, header=True)
+database_df.to_csv(r'data/db/db_NN_load.csv', index=False, header=True)
 # nn1_tmp_df.to_excel(r'target_market/nn1_tmp_df.xlsx', index=False)

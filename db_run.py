@@ -62,7 +62,7 @@ def load_nn_table():
         cur = conn.cursor()
 
         copy_command = f"COPY mmg.networkninja FROM STDIN CSV HEADER;"
-        cur.copy_expert(copy_command, open(r'postgres/db_data/db_NN_load.csv', "r"))
+        cur.copy_expert(copy_command, open(r'data/db/db_NN_load.csv', "r"))
         cur.execute('COMMIT;')
 
         # close the communication with the PostgreSQL
@@ -89,7 +89,7 @@ def update_bitly_table():
         cur = conn.cursor()
 
         copy_command = f"COPY mmg.bitly FROM STDIN CSV HEADER;"
-        cur.copy_expert(copy_command, open(r'postgres/db_data/db_bitly_load.csv', "r"))
+        cur.copy_expert(copy_command, open(r'data/db/db_bitly_load.csv', "r"))
         cur.execute('COMMIT;')
 
         # close the communication with the PostgreSQL

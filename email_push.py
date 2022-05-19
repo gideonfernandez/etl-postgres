@@ -2,19 +2,13 @@ import smtplib
 from config import *
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from datetime import datetime, timedelta
-from tzlocal import get_localzone
-
-local_tz = get_localzone()   # get local timezone
-now = datetime.now(local_tz) # get timezone-aware datetime object
-today = now.strftime('%Y-%m-%d %H:%M')
 
 username = MMG_USER
 password = MMG_PASSWORD
 mail_from = MMG_USER
 mail_to = RECIPIENT
-mail_subject = 'MMG Database Successfully Updated - ' + today 
-mail_body = 'The database was successfully updated at ' + today
+mail_subject = 'MMG Database Successfully Updated - ' + TODAY 
+mail_body = 'The database was successfully updated at ' + TODAY
 
 try:
 	mimemsg = MIMEMultipart()
