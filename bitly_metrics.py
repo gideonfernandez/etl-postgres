@@ -116,7 +116,7 @@ bitly_metrics_tags_df = bitly_metrics_tags_df[[
 
 bitly_metrics_tags_df['Date'] = pd.to_datetime(bitly_metrics_tags_df['Date']).dt.date
 
-bitly_metrics_tags_df.to_csv(r'data/db/db_BITLY_load.csv', index=False, header=True)
+bitly_metrics_tags_df.to_csv(r'data/db/db_bitly_load.csv', index=False, header=True)
 
 print('Bitly capture COMPLETED. Run time:', datetime.now() - startTime)
 
