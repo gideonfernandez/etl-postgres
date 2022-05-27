@@ -25,6 +25,18 @@ headers = {
     'Authorization': 'Bearer ' + BITLY_TOKEN,
 }
 
+@sleep_and_retry
+@limits(calls=MAX_CALLS_PER_MINUTE, period=ONE_MINUTE)
+def call_bitly_referrals(url, headers, params):
+    response = requests.get(url, headers=headers, params=params)
+    return response
+
+@sleep_and_retry
+@limits(calls=MAX_CALLS_PER_MINUTE, period=ONE_MINUTE)
+def call_bitly_tags(url, headers):
+    response_tag = requests.get(url, headers=headers)
+    return response_tag
+
 """
 Bitly Metrics
 """
@@ -50,8 +62,9 @@ for index, row in df.iterrows():
             ('unit_reference', row['date']),
         )
 
-        response = requests.get('https://api-ssl.bitly.com/v4/bitlinks/' + row['bitlink'] + '/referrers', headers=headers, params=params)
-
+        # response = requests.get('https://api-ssl.bitly.com/v4/bitlinks/' + row['bitlink'] + '/referrers', headers=headers, params=params)
+        response = call_bitly_referrals('https://api-ssl.bitly.com/v4/bitlinks/' + row['bitlink'] + '/referrers', headers, params)
+        
         metrics = response.json()
         referrers_df = pd.json_normalize(metrics, record_path='metrics')
 
@@ -71,7 +84,8 @@ Bitly TAGS
 dfs_tag = []
 for i in BITLY_LIST:
     try:
-        response_tag = requests.get('https://api-ssl.bitly.com/v4/bitlinks/' + i, headers=headers)
+        # response_tag = requests.get('https://api-ssl.bitly.com/v4/bitlinks/' + i, headers=headers)
+        response_tag = call_bitly_tags('https://api-ssl.bitly.com/v4/bitlinks/' + i, headers)
 
         tags = response_tag.json()
         tags_df = pd.json_normalize(tags, record_path='tags')

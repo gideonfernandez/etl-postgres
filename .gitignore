@@ -5,3 +5,5 @@ scratch.py
 
 archive/
 tmp/
+
+bitly_manual_job.py

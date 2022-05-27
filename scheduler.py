@@ -1,7 +1,11 @@
 import schedule
 import time
 import os
+from datetime import datetime, timedelta
 
+# Runtime start
+startTime = datetime.now()
+print('Date Start Time:', startTime)
 def job():
     '''Run scheduled job.'''
     print('Starting Quant Report...')
@@ -31,6 +35,9 @@ def job():
 
 schedule.every().day.at('11:00').do(job)  #Time in UTC
 # schedule.every(30).seconds.do(job)
+
+print('Date End Time:', datetime.now())
+print('NetworkNinja & Bitly Jobs COMPLETED. Run time:', datetime.now() - startTime)
 
 while True:
     schedule.run_pending()
