@@ -14,6 +14,10 @@ MMG_PASSWORD = 'gf*2100ea'
 
 RECIPIENT = 'gfernandez@montagemarketinggroup.com, analytics@montagemarketinggroup.com'
 
+# API RATE LIMITER
+ONE_MINUTE = 60
+MAX_CALLS_PER_MINUTE = 30
+
 BITLY_LIST = [
 	'bit.ly/LA-GoldenChange',
 	'bit.ly/togetherDMV',

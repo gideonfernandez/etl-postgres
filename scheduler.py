@@ -33,7 +33,7 @@ def job():
     exec(open('email_push.py').read())
     print('Email sent')
 
-schedule.every().day.at('13:58').do(job)  #Time in UTC
+schedule.every().day.at('14:14').do(job)  #Time in UTC
 # schedule.every(30).seconds.do(job)
 
 print('Date End Time:', datetime.now())
