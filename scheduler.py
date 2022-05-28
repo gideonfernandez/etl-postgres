@@ -1,6 +1,7 @@
 import schedule
 import time
 import os
+import requests
 from datetime import datetime
 
 # Runtime start
@@ -18,7 +19,7 @@ def job():
     exec(open('target_market.py').read())
     print('Target Market Report Done!')
 
-    # print('Starting Bitly Gather Updated Metrics Report...')
+    print('Starting Bitly Metrics Report...')
     time.sleep(5)
     exec(open('bitly_metrics.py').read())
     print('Bitly Metrics Captured!')
@@ -33,12 +34,12 @@ def job():
     exec(open('email_push.py').read())
     print('Email sent')
 
-schedule.every().day.at('14:14').do(job)  #Time in UTC
-# schedule.every(30).seconds.do(job)
-
-print('Date End Time:', datetime.now())
-print('NetworkNinja & Bitly Jobs COMPLETED. Run time:', datetime.now() - startTime)
+schedule.every().day.at('14:31').do(job)  #Time in UTC
+# schedule.every(14).seconds.do(job)
 
 while True:
     schedule.run_pending()
     time.sleep(1)
+
+print('Date End Time:', datetime.now())
+print('NetworkNinja & Bitly Jobs COMPLETED. Run time:', datetime.now() - startTime)
