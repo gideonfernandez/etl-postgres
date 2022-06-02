@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 username = MMG_USER
 password = MMG_PASSWORD
 mail_from = MMG_USER
-mail_to = RECIPIENT
+mail_to = 'gideonfernandez@velocitysense.com'
 mail_subject = 'MMG Database Successfully Updated - ' + TODAY 
 mail_body = 'The database was successfully updated at ' + TODAY
 

@@ -39,7 +39,14 @@ def job():
     print('Date End Time:', datetime.now())
     print('NetworkNinja & Bitly Jobs COMPLETED. Run time:', datetime.now() - startTime)
 
+def alerts():
+    print('NN table check...')
+    time.sleep(5)
+    os.system('python db_check_alerts.py')
+    print('NN table check completed')
+
 schedule.every().day.at('11:00').do(job)  #Time in UTC
+schedule.every().day.at('11:15').do(alerts)  #Time in UTC
 # schedule.every(30).seconds.do(job)
 
 while True:
