@@ -1,14 +1,72 @@
 import pandas as pd
-import xlrd
-import glob
+from config import *
 
 CANCELLED = ['lm cancelled', 'cancelled', 'Cancelled', 'Cancelled Last Minute', 'Missed']
 
-for i in glob.glob('data/pri*.csv'):
-    pri_filename = i
+# for i in glob.glob('data/pri*.csv'):
+#     pri_filename = i
+#
+# # Load the PRI report
+# pri_full_df = pd.read_csv(pri_filename, skiprows=2, thousands=r',')
 
-# Load the PRI report
-pri_full_df = pd.read_csv(pri_filename, skiprows=2, thousands=r',')
+"""
+0 - Pull PRI from SHAREPOINT
+Gets latest pri_auto file from MMG Data Team > Network Ninja > data
+"""
+import os.path
+from office365.runtime.auth.authentication_context import AuthenticationContext
+from office365.sharepoint.client_context import ClientContext
+from office365.sharepoint.files.file import File
+
+sharepoint_base_url = SHAREPOINT_BASE_URL
+sharepoint_subfolder = SHAREPOINT_SUBFOLDER
+sharepoint_user = MMG_USER
+sharepoint_password = MMG_PASSWORD
+
+# Constructing Details For Authenticating SharePoint
+
+auth = AuthenticationContext(sharepoint_base_url)
+
+auth.acquire_token_for_user(sharepoint_user, sharepoint_password)
+ctx = ClientContext(sharepoint_base_url, auth)
+web = ctx.web
+ctx.load(web)
+ctx.execute_query()
+print('Successfully connected to SharePoint: ', web.properties['Title'])
+
+# Constructing Function for getting file details in SharePoint Folder
+def folder_details(ctx, sharepoint_subfolder):
+    folder = ctx.web.get_folder_by_server_relative_url(sharepoint_subfolder)
+    fold_names = []
+    sub_folders = folder.files
+    ctx.load(sub_folders)
+    ctx.execute_query()
+    for s_folder in sub_folders:
+        fold_names.append(s_folder.properties["Name"] + ',' + s_folder.properties["TimeCreated"])
+    return fold_names
+
+# Getting folder details
+file_list = folder_details(ctx, sharepoint_subfolder)
+
+# Printing list of files from sharepoint folder and write to dataframe
+# print(file_list)
+file_list_df = pd.DataFrame([sub.split(",") for sub in file_list], columns=['File', 'Date'])
+
+# Sort dataframe by descending to get the latest file
+file_list_df = file_list_df.sort_values(by='Date',ascending=False)
+
+# Get filename of first row
+pri_filename = file_list_df['File'].iloc[0]
+
+# Reading File from SharePoint Folder
+sharepoint_file = '/sites/MMGDataTeam/Shared%20Documents/General/Network Ninja/data/' + pri_filename
+file_response = File.open_binary(ctx, sharepoint_file)
+
+# Saving file data directory where quant_report will pull pri data from
+with open(f'data/sharepoint_nn_data/{pri_filename}', 'wb') as output_file:
+    output_file.write(file_response.content)
+
+pri_full_df = pd.read_csv(f'data/sharepoint_nn_data/{pri_filename}', skiprows=2, thousands=r',')
 
 # Set date column to date
 # Format of this column needs to be set at yyyy-dd-mm so that

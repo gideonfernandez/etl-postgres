@@ -92,6 +92,9 @@ nn1_full_df['Best-resonating message'] = nn1_full_df['Best-resonating Messages']
 nn1_full_df['Concerns expressed'] = nn1_full_df['Concerns Expressed']
 nn1_full_df['Other notes'] = nn1_full_df['Other Notes']
 nn1_full_df['Governance Activities Summary'] = nn1_full_df['Please provide a one paragraph summary of the governance activities you participated in this month. (e.g. sub awardee management, monthly meetings, EC meetings, internal training, internal organizational management)']
+nn1_full_df['Research Facing'] = ''
+nn1_full_df['CTA'] = ''
+nn1_full_df['CTA Text'] = ''
 nn1_full_df['Source'] = 'NN1'
 
 '''
@@ -135,6 +138,9 @@ nn2_df = nn2_full_df[[
     'Concerns expressed',
     'Governance Activities Summary',
     'Other notes',
+    'Research Facing',
+    'CTA',
+    'CTA Text',
     'City',
     'State',
     'TM City',
@@ -179,6 +185,9 @@ nn1_df = nn1_full_df[[
     'Concerns expressed',
     'Governance Activities Summary',
     'Other notes',
+    'Research Facing',
+    'CTA',
+    'CTA Text',
     'City',
     'State',
     'TM City',
@@ -231,6 +240,9 @@ nn1_tmp_df = nn1_tmp_df[[
     'Concerns expressed_y',
     'Governance Activities Summary_y',
     'Other notes_y',
+    'Research Facing_y',
+    'CTA_y',
+    'CTA Text_y',
     'TM City_y',
     'TM State_y',
     # 'Source_y',
@@ -329,6 +341,9 @@ nn2_tmp_df = nn2_tmp_df[[
     'Concerns expressed_x',
     'Governance Activities Summary_x',
     'Other notes_x',
+    'Research Facing_x',
+    'CTA_x',
+    'CTA Text_x',
     'City',
     'State',
     'TM City',
@@ -358,6 +373,10 @@ target_market_df = target_market_df[~target_market_df['TYPE'].isin(['DUP'])]
 # Strip whitespaces in City, State fields
 target_market_df['City'] = target_market_df['City'].str.rstrip()
 target_market_df['State'] = target_market_df['State'].str.rstrip()
+
+# Change Partner Monthly Summary Report to MSR
+target_market_df.loc[(target_market_df['TYPE'] == 'Partner Monthly Summary Report'), 'TYPE'] = 'MSR'
+target_market_df['TYPE'] = target_market_df['TYPE'].str.upper()
 
 # Filter the data set based on the request
 # EDIT HERE TO ENABLE INPUT OF DATE FILTERING
@@ -428,6 +447,9 @@ database_df = database_df.rename(columns={
     'Concerns expressed': 'Concerns_expressed',
     'Governance Activities Summary': 'Governance_Activities_Summary',
     'Other notes': 'Other_notes',
+    'Research Facing': 'Research_Facing',
+    'CTA': 'CTA',
+    'CTA Text': 'CTA_Text',
     'TM City': 'TM_City',
     'TM State': 'TM_State',
     'City': 'City',
@@ -468,6 +490,9 @@ database_df = database_df[[
     'Concerns_expressed',
     'Governance_Activities_Summary',
     'Other_notes',
+    'Research_Facing',
+    'CTA',
+    'CTA_Text',
     'TM_City',
     'TM_State',
     'City',

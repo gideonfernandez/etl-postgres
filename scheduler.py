@@ -5,9 +5,11 @@ import requests
 from datetime import datetime
 
 # Runtime start
-startTime = datetime.now()
-print('Date Start Time:', startTime)
+
 def job():
+    startTime = datetime.now()
+    print('Date Start Time:', startTime)
+
     '''Run scheduled job.'''
     print('Starting Quant Report...')
     time.sleep(5)
@@ -34,12 +36,12 @@ def job():
     exec(open('email_push.py').read())
     print('Email sent')
 
+    print('Date End Time:', datetime.now())
+    print('NetworkNinja & Bitly Jobs COMPLETED. Run time:', datetime.now() - startTime)
+
 schedule.every().day.at('11:00').do(job)  #Time in UTC
 # schedule.every(30).seconds.do(job)
 
 while True:
     schedule.run_pending()
     time.sleep(1)
-
-print('Date End Time:', datetime.now())
-print('NetworkNinja & Bitly Jobs COMPLETED. Run time:', datetime.now() - startTime)

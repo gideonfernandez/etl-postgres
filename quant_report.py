@@ -70,7 +70,10 @@ with open(f'data/sharepoint_nn_data/{pri_filename}', 'wb') as output_file:
 '''
 # ENTER HERE to use local pri file, otherwise it will use the Sharepoint file
 # for i in glob.glob('data/pri*.csv'):
-    # pri_filename = i
+#     pri_filename = i
+
+# pri_full_df = pd.read_csv(pri_filename, skiprows=2, thousands=r',')
+
 
 pri_full_df = pd.read_csv(f'data/sharepoint_nn_data/{pri_filename}', skiprows=2, thousands=r',')
 
@@ -493,6 +496,48 @@ final_qnt_report_df['Partners Recapped'] = final_qnt_report_df[[
     'Partners | NonDig NonEvent - FQHC',
     ]].apply(lambda x: ','.join(x.dropna()), axis=1)
 
+final_qnt_report_df['CTA'] = final_qnt_report_df[[
+    'Digital Recap | CTA',
+    'In-Person Recap | CTA',
+    'Non-Digital Non-Event Recap | CTA',
+    'Hybrid Recap | CTA',
+    ]].apply(lambda x: ','.join(x.dropna()), axis=1)
+
+final_qnt_report_df['CTA Text'] = final_qnt_report_df[[
+    'Digital Recap | CTA Text 1',
+    'Digital Recap | CTA Text 2',
+    'Digital Recap | CTA Text 3',
+    'Digital Recap | CTA Text 4',
+    'In-Person Recap | CTA Text 1',
+    'In-Person Recap | CTA Text 2',
+    'In-Person Recap | CTA Text 3',
+    'In-Person Recap | CTA Text 4',
+    'Non-Digital Non-Event Recap | CTA Text 1',
+    'Non-Digital Non-Event Recap | CTA Text 2',
+    'Non-Digital Non-Event Recap | CTA Text 3',
+    'Non-Digital Non-Event Recap | CTA Text 4',
+    'Hybrid Recap | CTA Text 1',
+    'Hybrid Recap | CTA Text 2',
+    'Hybrid Recap | CTA Text 3',
+    'Hybrid Recap | CTA Text 4',
+    ]].apply(lambda x: ', '.join(x.dropna()), axis=1)
+
+# Research Facing Field
+for idx, row in final_qnt_report_df.iterrows():
+    # If RF1 is not null and RF2 is null, then use RF1
+    if final_qnt_report_df.loc[idx, 'Research Facing 1'] != ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] == ' ':
+        final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 1']
+    # If RF1 is null and RF2 is not null, then use RF2
+    elif final_qnt_report_df.loc[idx, 'Research Facing 1'] == ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] != ' ':
+        final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 2']
+    # If both RF fields are not null then use RF1
+    elif final_qnt_report_df.loc[idx, 'Research Facing 1'] != ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] != ' ':
+        final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 1']
+    # If both RF fields are null then null
+    elif final_qnt_report_df.loc[idx, 'Research Facing 1'] == ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] == ' ':
+        final_qnt_report_df.loc[idx, 'Research Facing'] = ''
+
+# Monthly Summary Reports
 final_qnt_report_df['Accomplishments'] = final_qnt_report_df['Admin Recap | Accomplishments'].fillna(
                                             final_qnt_report_df['Legacy Recap | Accomplishments'])
 
@@ -516,6 +561,12 @@ final_qnt_report_df['Other notes'] = final_qnt_report_df['Admin Recap | Other no
 
 final_qnt_report_df['Governance Activities Summary'] = final_qnt_report_df['Admin Recap | Governance Activities Summary'].fillna(
                                             final_qnt_report_df['Legacy Recap | Governance Activities Summary'])
+
+# Null out Legacy Id for NN2.0 activities
+final_qnt_report_df.loc[(final_qnt_report_df['Legacy Id'] == 0), 'Legacy Id'] = None
+
+# Drop duplicates caused by ECs submitting multiple recaps
+final_qnt_report_df = final_qnt_report_df.drop_duplicates(subset=['Event ID'])
 
 # Copy the full quant report to Target Markets
 final_qnt_report_df.to_csv(r'target_market/build_tm_inputs/nn2_apr1_2022.csv', index=False)
@@ -554,6 +605,9 @@ final_qnt_report_df = final_qnt_report_df[[
     'Concerns expressed',
     'Governance Activities Summary',
     'Other notes',
+    'Research Facing',
+    # 'CTA',
+    # 'CTA Text',
     ]].copy()
 
 final_qnt_report_df = final_qnt_report_df.sort_values(["TYPE"], ascending = (False))
@@ -572,4 +626,7 @@ with pd.ExcelWriter(r'data/FINAL_Pyxis_Quantitative - MONTH 2022.xlsx') as write
         worksheet_1.write(0, col_num, value, header_format)
 
 
-# final_qnt_report_df.to_excel(r'bug/debug.xlsx', index=False)
+
+
+
+# final_qnt_report_df.to_excel(r'tmp/debug.xlsx', index=False)
