@@ -18,6 +18,7 @@ sharepoint_password = MMG_PASSWORD
 authcookie = Office365(sharepoint_mmg_url, username=sharepoint_user, password=sharepoint_password).GetCookies()
 site = Site(sharepoint_base_url, version=Version.v365, authcookie=authcookie);
 folder_sp_bitly = site.Folder('Shared%20Documents/General/Bitly/Daily Table Backups')
+folder_sp_nn = site.Folder('Shared%20Documents/General/Network Ninja/Daily Table Backups')
 
 """
 SHAREPOINT END
@@ -40,6 +41,44 @@ def config(filename='database.ini', section='postgresql'):
         raise Exception('Section {0} not found in the {1} file'.format(section, filename))
 
     return db
+
+def backup_nn_table():
+    """ Connect to the PostgreSQL database server """
+    conn = None
+    try:
+        # read connection parameters
+        params = config()
+
+        # connect to the PostgreSQL server
+        # print('Connecting to the PostgreSQL database...')
+        conn = psycopg2.connect(**params)
+
+        # create a cursor
+        cur = conn.cursor()
+
+        outputquery = 'copy mmg.networkninja to stdout with csv header'.format('select * from mmg.networkninja')
+
+        timestamped = TIMESTR
+        with open(f'data/db/nn_daily_backups/nn_bkp_' + timestamped + '.csv', 'wb') as f:
+            nn_filename = 'nn_bkp_' + timestamped + '.csv'
+            
+            cur.copy_expert(outputquery, f)
+        
+        with open(f'data/db/nn_daily_backups/' + nn_filename, 'rb') as content_file:
+            nn_content = content_file.read()
+
+        folder_sp_nn.upload_file(nn_content, nn_filename)
+        print('Uploaded '+ nn_filename + ' to Sharepoint > NetworkNinja')
+
+        # close the communication with the PostgreSQL
+        cur.close()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+            print('Networkninja table backed up')
 
 def clear_nn_table():
     """ Connect to the PostgreSQL database server """
@@ -110,7 +149,7 @@ def backup_bitly_table():
         # create a cursor
         cur = conn.cursor()
 
-        outputquery = 'copy dev.bitly to stdout with csv header'.format('select * from dev.bitly')
+        outputquery = 'copy mmg.bitly to stdout with csv header'.format('select * from mmg.bitly')
 
         timestamped = TIMESTR
         with open(f'data/db/bitly_daily_backups/bitly_bkp_' + timestamped + '.csv', 'wb') as f:
@@ -162,6 +201,8 @@ def update_bitly_table():
             print('Database connection closed.')
 
 # Run the SQL commands
+backup_nn_table()
+time.sleep(5)
 clear_nn_table()
 time.sleep(5)
 load_nn_table()
