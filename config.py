@@ -1,12 +1,15 @@
+import time
 from datetime import datetime
 from pytz import timezone
 
 fmt = "%Y-%m-%d %H:%M:%S %Z%z"
 NOW_TIME = datetime.now(timezone('US/Eastern'))
 TODAY = NOW_TIME.strftime(fmt)  #Eastern Time, ie: 2022-05-19 09:36:02 EDT-0400
+TIMESTR = time.strftime("%Y%m%d-%H%M%S")
 
 BITLY_TOKEN = '87e91da4d9efdc2513496785c84e92d20da4d992'
 
+SHAREPOINT_MMG_URL = 'https://montagemarketing.sharepoint.com'
 SHAREPOINT_BASE_URL = 'https://montagemarketing.sharepoint.com/sites/MMGDataTeam/'
 SHAREPOINT_SUBFOLDER = '/sites/MMGDataTeam/Shared%20Documents/General/Network Ninja/data'
 MMG_USER = 'gfernandez@montagemarketinggroup.com'

@@ -4,6 +4,10 @@ import glob
 import numpy as np
 from config import *
 
+from shareplum import Office365
+from shareplum import Site
+from shareplum.site import Version
+
 APPROVED = ['approved', 'recapped', 'Finished', 'Recapped']
 NON_APPROVED = ['scheduled', 'requested', 'Scheduled', 'Requested', 'Request Rejected', 'Staffed']
 CANCELLED = ['lm cancelled', 'cancelled', 'Cancelled', 'Cancelled Last Minute', 'Missed']
@@ -56,6 +60,7 @@ file_list_df = file_list_df.sort_values(by='Date',ascending=False)
 
 # Get filename of first row
 pri_filename = file_list_df['File'].iloc[0]
+print(pri_filename)
 
 # Reading File from SharePoint Folder
 sharepoint_file = '/sites/MMGDataTeam/Shared%20Documents/General/Network Ninja/data/' + pri_filename
