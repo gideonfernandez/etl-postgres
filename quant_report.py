@@ -79,8 +79,19 @@ with open(f'data/sharepoint_nn_data/{pri_filename}', 'wb') as output_file:
 
 # pri_full_df = pd.read_csv(pri_filename, skiprows=2, thousands=r',')
 
+nn1_full_df = pd.read_csv(r'target_market/build_tm_inputs/nn1_jan1_2017_mar31_2022.csv', thousands=r',')
+nn1_full_df = nn1_full_df[[
+    'Event ID',
+    ]].copy()
 
-pri_full_df = pd.read_csv(f'data/sharepoint_nn_data/{pri_filename}', skiprows=2, thousands=r',')
+pri_full_df = pd.read_csv(f'data/sharepoint_nn_data/{pri_filename}', skiprows=2, thousands=r',', low_memory=False)
+
+pri_full_df = pri_full_df.merge(nn1_full_df.drop_duplicates(),
+    on=['Event ID'], how='left', indicator=True)
+
+pri_full_df = pri_full_df[pri_full_df['_merge'].isin(['left_only'])]
+
+pri_full_df = pri_full_df.drop(['_merge'], axis=1)
 
 # Filter PRI report by only looking at CPGI events
 NON_CPGI = [
@@ -104,13 +115,17 @@ pri_full_df['Venue Name'] = pri_full_df['Venue Name'].str.replace(r" \(you must 
 # Set date column to date
 # Format of this column needs to be set at yyyy-dd-mm so that
 # You can properly filter the records by date
+
+# Clean up incorrect date for event ID 16054
+pri_full_df.loc[(pri_full_df['Event ID'] == 16054), 'Date'] = '09/23/2020'
 pri_full_df['Date'] = pd.to_datetime(pri_full_df['Date']).dt.date
 
 '''
 2.  Filter out the data we don't need 
 '''
 # PRI Report
-quant_full_df = pri_full_df[~pri_full_df['Event Status'].isin(CANCELLED)]
+quant_full_df = pri_full_df.copy()
+# quant_full_df = pri_full_df[~pri_full_df['Event Status'].isin(CANCELLED)]
 
 '''
 CREATE REPORT DATAFRAMES START HERE
@@ -133,6 +148,8 @@ approved_df = quant_full_df.loc[quant_full_df['Event Status'].isin(APPROVED)]
 
 # 1. Needs review
 # All non-approved events go here
+
+# THESE TWO BOOKMARKS IS DROPPING THE MISSING EVENTS
 needs_review_df = quant_full_df.loc[quant_full_df['Event Status'].isin(NON_APPROVED)]
 needs_review_df = needs_review_df.loc[(needs_review_df['Event Recap Type Id'] != 10)]
 needs_review_df = needs_review_df.copy()
@@ -248,6 +265,11 @@ legacy_df = quant_full_df.loc[(quant_full_df['Event Recap Type Id'] == 10)]
 legacy_df = legacy_df.copy()
 legacy_df['TYPE'] = 'LEGACY'
 
+# 7. CancelLed
+cancelled_df = quant_full_df.loc[quant_full_df['Event Status'].isin(CANCELLED)]
+cancelled_df = cancelled_df.copy()
+cancelled_df['TYPE'] = 'CANCELLED'
+
 '''
 Compile all the dataframes here
 '''
@@ -266,6 +288,7 @@ final_rpts_frames = [
         admin_governance_df,
         legacy_df,
         needs_review_df,
+        cancelled_df,
         ]
 
 final_qnt_report_df = pd.concat(final_rpts_frames)

@@ -12,22 +12,6 @@ MALO = [
         19829,
         ]
 
-# Filter PRI report by only looking at CPGI events
-# NON_CPGI = [
-#             'CEP'
-#             ,'Comms'
-#             ,'DRC'
-#             ,'DV'
-#             ,'FQHC'
-#             ,'HPO'
-#             ,'Legislative'
-#             ,'NLM'
-#             ,'Visibility'
-#             ]
-
-# nn1_full_df = nn1_full_df.copy()
-# nn1_full_df = nn1_full_df[~nn1_full_df['Partner'].isin(NON_CPGI)]  #Comment out for all partners
-
 '''
 1. Add all the required fields in NN1 to line up with NN2
 '''
