@@ -14,11 +14,12 @@ sharepoint_base_url = SHAREPOINT_BASE_URL
 sharepoint_subfolder = SHAREPOINT_SUBFOLDER
 sharepoint_user = MMG_USER
 sharepoint_password = MMG_PASSWORD
-  
+
+#Database Table Backup SP Locations 
 authcookie = Office365(sharepoint_mmg_url, username=sharepoint_user, password=sharepoint_password).GetCookies()
 site = Site(sharepoint_base_url, version=Version.v365, authcookie=authcookie);
-folder_sp_bitly = site.Folder('Shared%20Documents/General/Bitly/Daily Table Backups')
-folder_sp_nn = site.Folder('Shared%20Documents/General/Network Ninja/Daily Table Backups')
+folder_sp_bitly = site.Folder('Shared%20Documents/General/Database/Daily Table Backups/Bitly')
+folder_sp_nn = site.Folder('Shared%20Documents/General/Database/Daily Table Backups/NetworkNinja')
 
 """
 SHAREPOINT END
@@ -68,7 +69,7 @@ def backup_nn_table():
             nn_content = content_file.read()
 
         folder_sp_nn.upload_file(nn_content, nn_filename)
-        print('Uploaded '+ nn_filename + ' to Sharepoint > NetworkNinja')
+        print('Uploaded '+ nn_filename + ' to Database > Daily Table Backups > NetworkNinja')
 
         # close the communication with the PostgreSQL
         cur.close()
@@ -161,7 +162,7 @@ def backup_bitly_table():
             bitly_content = content_file.read()
 
         folder_sp_bitly.upload_file(bitly_content, bitly_filename)
-        print('Uploaded '+ bitly_filename + ' to Sharepoint > Bitly')
+        print('Uploaded '+ bitly_filename + ' to Database > Daily Table Backups > Bitly')
 
         # close the communication with the PostgreSQL
         cur.close()

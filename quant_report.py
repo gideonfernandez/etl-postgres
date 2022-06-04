@@ -63,7 +63,8 @@ pri_filename = file_list_df['File'].iloc[0]
 print(pri_filename)
 
 # Reading File from SharePoint Folder
-sharepoint_file = '/sites/MMGDataTeam/Shared%20Documents/General/Network Ninja/data/' + pri_filename
+sharepoint_file = '/sites/MMGDataTeam/Shared%20Documents/General/Database/Daily Data Sources/NetworkNinja/' + pri_filename
+
 file_response = File.open_binary(ctx, sharepoint_file)
 
 # Saving file data directory where quant_report will pull pri data from
