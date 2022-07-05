@@ -7,6 +7,7 @@ NOW_TIME = datetime.now(timezone('US/Eastern'))
 TODAY = NOW_TIME.strftime(fmt)  #Eastern Time, ie: 2022-05-19 09:36:02 EDT-0400
 TIMESTR = time.strftime("%Y%m%d-%H%M%S")
 TODAYSTR = time.strftime("%Y%m%d")
+TODAY_SLASH = time.strftime("%m/%d/%Y")
 
 BITLY_TOKEN = '87e91da4d9efdc2513496785c84e92d20da4d992'
 
