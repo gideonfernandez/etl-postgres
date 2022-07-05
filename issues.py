@@ -6,7 +6,7 @@ from config import *
 
 APPROVE_RECAP = 'NEED EC Review \nChange Status\nRECAP needs to be approved'
 NO_RECAP = 'NEED EC Review \nNo recap\nCancel?'
-TEST_RECAP = 'Test Activity. Delete?'
+TEST_RECAP = 'Event is not approved and contains word "TEST". Confirm and Delete?'
 
 # Load the PRI report
 # for i in glob.glob('data/pri*.csv'):
@@ -62,9 +62,11 @@ file_list_df = file_list_df.sort_values(by='Date',ascending=False)
 
 # Get filename of first row
 pri_filename = file_list_df['File'].iloc[0]
+print(pri_filename)
 
 # Reading File from SharePoint Folder
-sharepoint_file = '/sites/MMGDataTeam/Shared%20Documents/General/Network Ninja/data/' + pri_filename
+sharepoint_file = '/sites/MMGDataTeam/Shared%20Documents/General/Database/Daily Data Sources/NetworkNinja/' + pri_filename
+
 file_response = File.open_binary(ctx, sharepoint_file)
 
 # Saving file data directory where quant_report will pull pri data from
@@ -333,12 +335,14 @@ pyxis_report_issues_df = pyxis_report_issues_df[[
 pyxis_report_issues_df = pyxis_report_issues_df.sort_values(["*", "Date"], ascending = (False, True))
 
 # This file here writes the final issues report
-with pd.ExcelWriter(r'data/FINAL_Pyxis Report Issues - MMM 2022.xlsx') as writer:  # doctest: +SKIP
-    pyxis_report_issues_df.to_excel(writer, index=False, startrow = 0, sheet_name='Pyxis Report Issues - MM 2022')
+with pd.ExcelWriter(r'data/Pyxis Report Issues_' + TODAYSTR + '.xlsx') as writer:  # doctest: +SKIP
+    sheet_name = 'Pyxis Report Issues_' + TODAYSTR
+    print(sheet_name)
+    pyxis_report_issues_df.to_excel(writer, index=False, startrow = 0, sheet_name=sheet_name)
 
     workbook  = writer.book
 
-    tab_1_sheet_name = 'Pyxis Report Issues - MM 2022'
+    tab_1_sheet_name = sheet_name
     worksheet_1 = writer.sheets[tab_1_sheet_name]
 
     header_format = workbook.add_format({'bold': False, 'text_wrap': False, 'border': 1, 'align': 'center', 'valign': 'left'})
