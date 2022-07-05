@@ -9,7 +9,8 @@ from email import encoders
 username = MMG_USER
 password = MMG_PASSWORD
 mail_from = MMG_USER
-mail_to = 'analytics@montagemarketinggroup.com, ematel@montagemarketinggroup.com, mkreider@montagemarketinggroup.com, gfernandez@montagemarketinggroup.com'
+mail_to = 'gideonfernandez@velocitysense.com'
+# mail_to = 'analytics@montagemarketinggroup.com, ematel@montagemarketinggroup.com, mkreider@montagemarketinggroup.com, gfernandez@montagemarketinggroup.com'
 mail_subject = 'Weekly Pyxis Issues Report - ' + TODAY 
 mail_body = 'Hi team, \n\nPlease find the weekly Pyxis Issues Report attached for activities starting June 1, 2022 and forward. \n\nRegards, \nGideon'
 
