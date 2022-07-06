@@ -128,4 +128,6 @@ BITLY_LIST = [
 	'bit.ly/togetherMuneera',
 	'bit.ly/togetherPaola',
 	'bit.ly/togetherSWIFT',
+	'bit.ly/LA-NORBCC',
+	'bit.ly/LA-NORBCC-es',
 ]
