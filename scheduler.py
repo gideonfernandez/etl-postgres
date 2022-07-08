@@ -54,7 +54,8 @@ def issues():
 
 schedule.every().day.at('11:00').do(job)  #Time in UTC
 schedule.every().day.at('11:15').do(alerts)  #Time in UTC
-schedule.every().friday.at('21:15').do(issues)  #Time in UTC
+# schedule.every().friday.at('21:15').do(issues)  #Time in UTC
+schedule.every().friday.at('21:59').do(issues)  #Time in UTC
 
 # schedule.every(15).seconds.do(issues)
 
