@@ -298,12 +298,10 @@ excluded = ['lm cancelled', 'cancelled', 'approved', 'Finished', 'Cancelled']
 pyxis_report_issues_df.loc[(pyxis_report_issues_df['Event Status'].isin(excluded)), '*'] = '*'
 
 # If event name contains the word 'Test', review the test activity
-# pyxis_report_issues_df.loc[((pyxis_report_issues_df['Name'].str.contains('test', case=False))), '*'] = TEST_RECAP
-# Assign the same as above for approved/recapped Legacy events
 for idx, row in pyxis_report_issues_df.iterrows():
     if pyxis_report_issues_df.loc[idx, 'Event Status'] != 'Finished':
         if (findWholeWord('test')(pyxis_report_issues_df.loc[idx,'Name']) != None):
-            pyxis_report_issues_df.loc[idx, '*'] = 'THIS IS DEFINITELY A TEST EVENT'
+            pyxis_report_issues_df.loc[idx, '*'] = TEST_RECAP
 
 # Set date column to date
 # Format of this column needs to be set at yyyy-dd-mm so that
