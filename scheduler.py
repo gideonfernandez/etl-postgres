@@ -52,7 +52,7 @@ def issues():
     exec(open('email_issues_report.py').read())
     print('Weekly issues report completed')
 
-schedule.every().day.at('11:00').do(job)  #Time in UTC
+schedule.every().day.at('13:40').do(job)  #Time in UTC
 schedule.every().day.at('11:15').do(alerts)  #Time in UTC
 schedule.every().friday.at('21:15').do(issues)  #Time in UTC
 
