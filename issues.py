@@ -77,7 +77,7 @@ file_response = File.open_binary(ctx, sharepoint_file)
 with open(f'data/sharepoint_nn_data/{pri_filename}', 'wb') as output_file:
     output_file.write(file_response.content)
 
-pri_full_df = pd.read_csv(f'data/sharepoint_nn_data/{pri_filename}', skiprows=2, thousands=r',')
+pri_full_df = pd.read_csv(f'data/sharepoint_nn_data/{pri_filename}', skiprows=2, thousands=r',', low_memory=False)
 
 # Filter PRI report by only looking at CPGI events
 NON_CPGI = [

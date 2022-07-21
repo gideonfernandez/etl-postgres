@@ -552,19 +552,19 @@ final_qnt_report_df['CTA Text'] = final_qnt_report_df[[
     ]].apply(lambda x: ', '.join(x.dropna()), axis=1)
 
 # Research Facing Field
-for idx, row in final_qnt_report_df.iterrows():
-    # If RF1 is not null and RF2 is null, then use RF1
-    if final_qnt_report_df.loc[idx, 'Research Facing 1'] != ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] == ' ':
-        final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 1']
-    # If RF1 is null and RF2 is not null, then use RF2
-    elif final_qnt_report_df.loc[idx, 'Research Facing 1'] == ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] != ' ':
-        final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 2']
-    # If both RF fields are not null then use RF1
-    elif final_qnt_report_df.loc[idx, 'Research Facing 1'] != ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] != ' ':
-        final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 1']
-    # If both RF fields are null then null
-    elif final_qnt_report_df.loc[idx, 'Research Facing 1'] == ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] == ' ':
-        final_qnt_report_df.loc[idx, 'Research Facing'] = ''
+# for idx, row in final_qnt_report_df.iterrows():
+#     # If RF1 is not null and RF2 is null, then use RF1
+#     if final_qnt_report_df.loc[idx, 'Research Facing 1'] != ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] == ' ':
+#         final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 1']
+#     # If RF1 is null and RF2 is not null, then use RF2
+#     elif final_qnt_report_df.loc[idx, 'Research Facing 1'] == ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] != ' ':
+#         final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 2']
+#     # If both RF fields are not null then use RF1
+#     elif final_qnt_report_df.loc[idx, 'Research Facing 1'] != ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] != ' ':
+#         final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 1']
+#     # If both RF fields are null then null
+#     elif final_qnt_report_df.loc[idx, 'Research Facing 1'] == ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] == ' ':
+#         final_qnt_report_df.loc[idx, 'Research Facing'] = ''
 
 # Monthly Summary Reports
 final_qnt_report_df['Accomplishments'] = final_qnt_report_df['Admin Recap | Accomplishments'].fillna(
