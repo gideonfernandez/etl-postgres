@@ -49,7 +49,7 @@ def issues():
     print('Starting weekly issues report...')
     os.system('python issues.py')
     time.sleep(30)
-    # exec(open('email_issues_report.py').read())
+    exec(open('email_issues_report.py').read())
     print('Weekly issues report completed')
 
 schedule.every().day.at('11:00').do(job)  #Time in UTC
