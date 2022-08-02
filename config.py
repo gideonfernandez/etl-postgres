@@ -14,10 +14,10 @@ BITLY_TOKEN = '87e91da4d9efdc2513496785c84e92d20da4d992'
 SHAREPOINT_MMG_URL = 'https://montagemarketing.sharepoint.com'
 SHAREPOINT_BASE_URL = 'https://montagemarketing.sharepoint.com/sites/MMGDataTeam/'
 SHAREPOINT_SUBFOLDER = '/sites/MMGDataTeam/Shared%20Documents/General/Database/Daily Data Sources/NetworkNinja/'
-MMG_USER = 'gfernandez@montagemarketinggroup.com'
-MMG_PASSWORD = 'gf*2100ea'
+MMG_USER = 'analytics@montagemarketinggroup.com'
+MMG_PASSWORD = 'xJfDB94zqWS4I4M2%$xf'
 
-RECIPIENT = 'gfernandez@montagemarketinggroup.com, analytics@montagemarketinggroup.com'
+RECIPIENT = 'analytics@montagemarketinggroup.com, gfernandez@montagemarketinggroup.com'
 
 # API RATE LIMITER
 ONE_MINUTE = 60

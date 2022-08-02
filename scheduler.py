@@ -21,15 +21,15 @@ def job():
     exec(open('target_market.py').read())
     print('Target Market Report Done!')
 
-    print('Starting Bitly Metrics Report...')
-    time.sleep(5)
-    exec(open('bitly_metrics.py').read())
-    print('Bitly Metrics Captured!')
+    # print('Starting Bitly Metrics Report...')
+    # time.sleep(5)
+    # exec(open('bitly_metrics.py').read())
+    # print('Bitly Metrics Captured!')
 
-    print('Starting Postgresql jobs...')
-    time.sleep(5)
-    os.system('python db_run.py')
-    print('Postgresql tables updated!')
+    # print('Starting Postgresql jobs...')
+    # time.sleep(5)
+    # os.system('python db_run.py')
+    # print('Postgresql tables updated!')
 
     print('Sending email...')
     time.sleep(5)
@@ -52,11 +52,11 @@ def issues():
     exec(open('email_issues_report.py').read())
     print('Weekly issues report completed')
 
-schedule.every().day.at('11:00').do(job)  #Time in UTC
-schedule.every().day.at('11:15').do(alerts)  #Time in UTC
-schedule.every().friday.at('21:15').do(issues)  #Time in UTC
+schedule.every().day.at('17:51').do(job)  #Time in UTC
+# schedule.every().day.at('11:15').do(alerts)  #Time in UTC
+# schedule.every().friday.at('21:15').do(issues)  #Time in UTC
 
-# schedule.every(15).seconds.do(issues)
+# schedule.every(15).seconds.do(job)
 
 while True:
     schedule.run_pending()
