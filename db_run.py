@@ -12,8 +12,10 @@ Upload backup files to SHAREPOINT
 sharepoint_mmg_url = SHAREPOINT_MMG_URL
 sharepoint_base_url = SHAREPOINT_BASE_URL
 sharepoint_subfolder = SHAREPOINT_SUBFOLDER
-sharepoint_user = MMG_USER
-sharepoint_password = MMG_PASSWORD
+# sharepoint_user = MMG_USER
+# sharepoint_password = MMG_PASSWORD
+sharepoint_user = 'gfernandez@montagemarketinggroup.com'
+sharepoint_password = 'gf*2100ea'
 
 #Database Table Backup SP Locations 
 authcookie = Office365(sharepoint_mmg_url, username=sharepoint_user, password=sharepoint_password).GetCookies()
@@ -24,7 +26,6 @@ folder_sp_nn = site.Folder('Shared%20Documents/General/Database/Daily Table Back
 """
 SHAREPOINT END
 """
-
 
 def config(filename='database.ini', section='postgresql'):
     # create a parser
