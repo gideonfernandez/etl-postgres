@@ -1,6 +1,6 @@
 import time
 import psycopg2
-from bitly_metrics import no_bitly_clicks
+from bitly_metrics import bitly_click_info
 from shareplum import Office365
 from shareplum import Site
 from shareplum.site import Version
@@ -212,7 +212,10 @@ load_nn_table()
 time.sleep(5)
 backup_bitly_table()
 time.sleep(5)
-if no_bitly_clicks != 'There were no Bitly clicks yesterday':
+
+if bitly_click_info == 'Bitly clicks found for yesterday':
+    print(bitly_click_info)
     update_bitly_table()
-else:
+elif bitly_click_info == 'There were no Bitly clicks yesterday':
+    print(bitly_click_info)
     print('DB Run Script: There were no Bitly clicks to report yesterday')

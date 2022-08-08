@@ -124,8 +124,9 @@ bitly_metrics_tags_df = bitly_metrics_tags_df.rename(columns={
 # If bitly_metrics_tags_df is not null then continue with building out dataframe.
 # Otherwise exit
 if bitly_metrics_tags_df.empty:
-    no_bitly_clicks = 'There were no Bitly clicks yesterday'
+    bitly_click_info = 'There were no Bitly clicks yesterday'
 else:
+    bitly_click_info = 'Bitly clicks found for yesterday'
     bitly_metrics_tags_df = bitly_metrics_tags_df[[
         'Date',
         'Bitly',
