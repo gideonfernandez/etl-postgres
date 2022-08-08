@@ -121,17 +121,22 @@ bitly_metrics_tags_df = bitly_metrics_tags_df.rename(columns={
     'tags': 'Tags',
     })
 
-bitly_metrics_tags_df = bitly_metrics_tags_df[[
-    'Date',
-    'Bitly',
-    'Source',
-    'Tags',
-    'Clicks',
-    ]].copy()
+# If bitly_metrics_tags_df is not null then continue with building out dataframe.
+# Otherwise exit
+if bitly_metrics_tags_df.empty:
+    no_bitly_clicks = 'There were no Bitly clicks yesterday'
+else:
+    bitly_metrics_tags_df = bitly_metrics_tags_df[[
+        'Date',
+        'Bitly',
+        'Source',
+        'Tags',
+        'Clicks',
+        ]].copy()
 
-bitly_metrics_tags_df['Date'] = pd.to_datetime(bitly_metrics_tags_df['Date']).dt.date
-
-bitly_metrics_tags_df.to_csv(r'data/db/db_bitly_load.csv', index=False, header=True)
+    bitly_metrics_tags_df['Date'] = pd.to_datetime(bitly_metrics_tags_df['Date']).dt.date
+    
+    bitly_metrics_tags_df.to_csv(r'data/db/db_bitly_load.csv', index=False, header=True)
 
 print('Bitly capture COMPLETED. Run time:', datetime.now() - startTime)
 
