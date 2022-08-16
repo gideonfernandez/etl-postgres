@@ -4,16 +4,11 @@ import glob
 import numpy as np
 from datetime import datetime
 
-nn1_full_df = pd.read_csv(r'target_market/build_tm_inputs/nn1_jan1_2017_mar31_2022.csv', thousands=r',')
-nn2_full_df = pd.read_csv(r'target_market/build_tm_inputs/nn2_apr1_2022.csv', thousands=r',')
-
-# ADD IDs to exclude such as test events, duplicate events
-MALO = [
-        19829,
-        ]
+nn1_full_df = pd.read_csv(r'target_market/legacy_data.csv', thousands=r',')
+nn2_full_df = pd.read_csv(r'target_market/new_data.csv', thousands=r',')
 
 '''
-1. Add all the required fields in NN1 to line up with NN2
+1. Add all the required fields in System_1 to line up with System_2
 '''
 nn1_full_df['#-Total Social Media Posts'] = (
                     nn1_full_df['Number of videos']
@@ -346,14 +341,6 @@ nn_frames = [
 
 target_market_df = pd.concat(nn_frames)
 
-# Remove all the bad records like test and drop temp columns
-for idx, row in target_market_df.iterrows():
-
-    # If Event ID is empty then assign the Legacy Id
-    if target_market_df.loc[idx, 'Event ID'] in MALO and target_market_df.loc[idx, 'TYPE'] == 'ADMIN':
-        target_market_df.loc[idx, 'TYPE'] = 'DUP'
-target_market_df = target_market_df[~target_market_df['TYPE'].isin(['DUP'])] 
-
 # Strip whitespaces in City, State fields
 target_market_df['City'] = target_market_df['City'].str.rstrip()
 target_market_df['State'] = target_market_df['State'].str.rstrip()
@@ -362,17 +349,7 @@ target_market_df['State'] = target_market_df['State'].str.rstrip()
 target_market_df.loc[(target_market_df['TYPE'] == 'Partner Monthly Summary Report'), 'TYPE'] = 'MSR'
 target_market_df['TYPE'] = target_market_df['TYPE'].str.upper()
 
-# Filter the data set based on the request
-# EDIT HERE TO ENABLE INPUT OF DATE FILTERING
-# start_input = str(input('Report Start Date: '))
-# start_date = datetime.strptime(start_input, "%Y-%m-%d")
-# end_input = str(input('Report End Date: '))
-# end_date = datetime.strptime(end_input, "%Y-%m-%d")
-
-# target_market_df['Date'] = target_market_df['Date'].apply(pd.to_datetime)
-# target_market_df = target_market_df[(target_market_df['Date'] >= start_date) & (target_market_df['Date'] <= end_date)]
-# target_market_df['Date'] = target_market_df['Date'].dt.date
-
+# Filter and sort the data set based on the request
 target_market_df = target_market_df.sort_values(['Legacy Id'], ascending = (True))
 
 # This is the final quant report
@@ -483,5 +460,4 @@ database_df = database_df[[
     'State',
     ]].copy()
 
-database_df.to_csv(r'data/db/db_NN_load.csv', index=False, header=True)
-# nn1_tmp_df.to_excel(r'target_market/nn1_tmp_df.xlsx', index=False)
+database_df.to_csv(r'data/db/db_network_load.csv', index=False, header=True)

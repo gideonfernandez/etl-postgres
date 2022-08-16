@@ -3,11 +3,11 @@ from config import *
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-username = MMG_USER
-password = MMG_PASSWORD
-mail_from = MMG_USER
+username = EMAIL_USER
+password = EMAIL_PASSWORD
+mail_from = EMAIL_USER
 mail_to = RECIPIENT
-mail_subject = 'MMG Database Successfully Updated - ' + TODAY 
+mail_subject = 'Database Successfully Updated - ' + TODAY 
 mail_body = 'The database was successfully updated at ' + TODAY
 
 try:

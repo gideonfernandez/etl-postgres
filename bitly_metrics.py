@@ -63,7 +63,6 @@ for index, row in df.iterrows():
             ('unit_reference', row['date']),
         )
 
-        # response = requests.get('https://api-ssl.bitly.com/v4/bitlinks/' + row['bitlink'] + '/referrers', headers=headers, params=params)
         response = call_bitly_referrals('https://api-ssl.bitly.com/v4/bitlinks/' + row['bitlink'] + '/referrers', headers, params)
         
         metrics = response.json()
@@ -85,7 +84,6 @@ Bitly TAGS
 dfs_tag = []
 for i in BITLY_LIST:
     try:
-        # response_tag = requests.get('https://api-ssl.bitly.com/v4/bitlinks/' + i, headers=headers)
         response_tag = call_bitly_tags('https://api-ssl.bitly.com/v4/bitlinks/' + i, headers)
 
         tags = response_tag.json()
@@ -140,8 +138,3 @@ else:
     bitly_metrics_tags_df.to_csv(r'data/db/db_bitly_load.csv', index=False, header=True)
 
 print('Bitly capture COMPLETED. Run time:', datetime.now() - startTime)
-
-
-
-
-# bitly_df.to_excel(r'tmp/debug.xlsx', index=False)

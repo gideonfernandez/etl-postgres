@@ -6,12 +6,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from configparser import ConfigParser
 
-username = MMG_USER
-password = MMG_PASSWORD
-mail_from = MMG_USER
-mail_to = 'gideonfernandez@velocitysense.com'
-# mail_subject = 'FAILURE ALERT - MMG Database Update Failed ' + TODAY
-mail_body = 'The NN or Bitly table may have not successfully update at ' + TODAY
+username = EMAIL_USER
+password = EMAIL_PASSWORD
+mail_from = EMAIL_USER
+mail_to = RECIPIENT
+mail_body = 'The network_table or Bitly table may have not successfully update at ' + TODAY
 
 def config(filename='database.ini', section='postgresql'):
     # create a parser
@@ -31,7 +30,7 @@ def config(filename='database.ini', section='postgresql'):
     return db
 
 """
-NETWORKNINJA table check
+network_table table check
 """
 def check_nn_table():
     """ Connect to the PostgreSQL database server """
@@ -47,7 +46,7 @@ def check_nn_table():
         # create a cursor
         cur = conn.cursor()
 
-        cur.execute('SELECT COUNT(*) FROM mmg.networkninja')
+        cur.execute('SELECT COUNT(*) FROM db_a.network_table')
         nn_count = cur.fetchone()
 
         # close the communication with the PostgreSQL
@@ -65,13 +64,13 @@ results = check_nn_table()
 for i in results:
     record_count = i
 
-# If the NN table count is 0, then send an alert
+# If the network_table table count is 0, then send an alert
 if record_count == 0:
     try:
         mimemsg = MIMEMultipart()
         mimemsg['From']=mail_from
         mimemsg['To']=mail_to
-        mimemsg['Subject']= 'FAILURE ALERT - NetworkNinja Update Failed ' + TODAY
+        mimemsg['Subject']= 'FAILURE ALERT - network_table Update Failed ' + TODAY
         mimemsg.attach(MIMEText(mail_body, 'plain'))
         connection = smtplib.SMTP(host='smtp.office365.com', port=587)
         connection.starttls()
@@ -99,7 +98,7 @@ def check_bitly_table():
         # create a cursor
         cur = conn.cursor()
 
-        cur.execute("SELECT COUNT(*) FROM mmg.bitly WHERE date = (current_date - INTERVAL '1 day')::date")
+        cur.execute("SELECT COUNT(*) FROM db_a.bitly WHERE date = (current_date - INTERVAL '1 day')::date")
         bitly_count = cur.fetchone()
 
         # close the communication with the PostgreSQL
@@ -118,7 +117,7 @@ for i in results:
     print(i)
     bitly_record_count = i
 
-# If the NN table count is 0, then send an alert
+# If the table count is 0, then send an alert
 if bitly_record_count == 0:
     try:
         mimemsg = MIMEMultipart()

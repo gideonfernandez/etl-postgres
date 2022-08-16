@@ -5,18 +5,17 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 
+username = EMAIL_USER
+password = EMAIL_PASSWORD
+mail_from = EMAIL_USER
+mail_to = RECIPIENT
+mail_cc = 'recipient_3@mail.com'
+mail_subject = 'Weekly Issues Report - ' + TODAY_SLASH 
+mail_body = 'Hi all, \n\nPlease find the weekly Issues Report attached for activities starting from X date and forward. \n\nRegards, \nData Team'
 
-username = MMG_USER
-password = MMG_PASSWORD
-mail_from = MMG_USER
-mail_to = 'conyechi@vennstrategies.com, ebradford@pyxispartners.co, elee@vennstrategies.com, hyuan@montagemarketinggroup.com, jeason@vennstrategies.com, jwallace@pyxispartners.co, jbonilla@pyxispartners.co, jccraig@montagemarketinggroup.com, jdaverne@pyxispartners.co, kcantor@pyxispartners.co, kforbes@pyxispartners.co, kconstantine@vennstrategies.com, lgilmer@montagemarketinggroup.com, rciulla@pyxispartners.co, rkmatsumoto@montagemarketinggroup.com, rtepp@pyxispartners.co, swhitaker@vennstrategies.com, wbhagat@montagemarketinggroup.com, yvelasquez@pyxispartners.co, aadams@montagemarketinggroup.com, ispann@montagemarketinggroup.com'
-mail_cc = 'analytics@montagemarketinggroup.com, ematel@montagemarketinggroup.com, mkreider@montagemarketinggroup.com, gfernandez@montagemarketinggroup.com'
-mail_subject = 'Weekly Pyxis Issues Report - ' + TODAY_SLASH 
-mail_body = 'Hi all, \n\nPlease find the weekly Pyxis Issues Report attached for activities starting June 1, 2022 and forward. \n\nRegards, \nMMG Data Team'
+filepath = ISSUES_FILEPATH
+filename = ISSUES_FILENAME
 
-filepath = r'data/Pyxis Report Issues_' + TODAYSTR + '.xlsx'
-filename = r'Pyxis Report Issues_' + TODAYSTR + '.xlsx'
-	
 try:
 	mimemsg = MIMEMultipart()
 	mimemsg['From']=mail_from

@@ -1,9 +1,3 @@
 __pycache__/
 *.pyc
-
-scratch.py
-
-archive/
-tmp/
-
-bitly_manual_job.py
+config.py

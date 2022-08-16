@@ -12,15 +12,8 @@ TEST_RECAP = 'Event is not approved and contains word "TEST". Confirm and Delete
 def findWholeWord(w):
     return re.compile(r'\b({0})\b'.format(w), flags=re.IGNORECASE).search
 
-# Load the PRI report
-# for i in glob.glob('data/pri*.csv'):
-#     pri_filename = i
-
-# pri_full_df = pd.read_csv(pri_filename, skiprows=2, thousands=r',')
-
 """
 0 - Pull PRI from SHAREPOINT
-Gets latest pri_auto file from MMG Data Team > Network Ninja > data
 """
 import os.path
 from office365.runtime.auth.authentication_context import AuthenticationContext
@@ -29,8 +22,8 @@ from office365.sharepoint.files.file import File
 
 sharepoint_base_url = SHAREPOINT_BASE_URL
 sharepoint_subfolder = SHAREPOINT_SUBFOLDER
-sharepoint_user = MMG_USER
-sharepoint_password = MMG_PASSWORD
+sharepoint_user = EMAIL_USER
+sharepoint_password = EMAIL_PASSWORD
 
 # Constructing Details For Authenticating SharePoint
 
@@ -58,7 +51,6 @@ def folder_details(ctx, sharepoint_subfolder):
 file_list = folder_details(ctx, sharepoint_subfolder)
 
 # Printing list of files from sharepoint folder and write to dataframe
-# print(file_list)
 file_list_df = pd.DataFrame([sub.split(",") for sub in file_list], columns=['File', 'Date'])
 
 # Sort dataframe by descending to get the latest file
@@ -69,7 +61,7 @@ pri_filename = file_list_df['File'].iloc[0]
 print(pri_filename)
 
 # Reading File from SharePoint Folder
-sharepoint_file = '/sites/MMGDataTeam/Shared%20Documents/General/Database/Daily Data Sources/NetworkNinja/' + pri_filename
+sharepoint_file = '/sites/ClientDataTeam/Shared%20Documents/General/NN/data/' + pri_filename
 
 file_response = File.open_binary(ctx, sharepoint_file)
 
@@ -79,21 +71,21 @@ with open(f'data/sharepoint_nn_data/{pri_filename}', 'wb') as output_file:
 
 pri_full_df = pd.read_csv(f'data/sharepoint_nn_data/{pri_filename}', skiprows=2, thousands=r',', low_memory=False)
 
-# Filter PRI report by only looking at CPGI events
-NON_CPGI = [
-            'CEP'
-            ,'Comms'
-            ,'DRC'
-            ,'DV'
-            ,'FQHC'
-            ,'HPO'
-            ,'Legislative'
-            ,'NLM'
-            ,'Visibility'
+# Filter PRI report by only looking at ABCD events
+NON_ABCD = [
+            'GROUP_1'
+            ,'GROUP_2'
+            ,'GROUP_3'
+            ,'GROUP_4'
+            ,'GROUP_5'
+            ,'GROUP_6'
+            ,'GROUP_7'
+            ,'GROUP_8'
+            ,'GROUP_9'
             ]
 
 pri_df = pri_full_df.copy()
-pri_df = pri_df[~pri_df['Partner'].isin(NON_CPGI)]
+pri_df = pri_df[~pri_df['Partner'].isin(NON_ABCD)]
 
 # Delete text from NN2.0 Venue Name field
 pri_df['Venue Name'] = pri_df['Venue Name'].str.replace(r" \(you must add id from venues_profiles for this to link\)","", regex=True)
@@ -292,31 +284,29 @@ issues_frames = [
         pri_no_recap_df,
         ]
 
-pyxis_report_issues_df = pd.concat(issues_frames)
+Efghi_report_issues_df = pd.concat(issues_frames)
 
 excluded = ['lm cancelled', 'cancelled', 'approved', 'Finished', 'Cancelled']
-pyxis_report_issues_df.loc[(pyxis_report_issues_df['Event Status'].isin(excluded)), '*'] = '*'
+Efghi_report_issues_df.loc[(Efghi_report_issues_df['Event Status'].isin(excluded)), '*'] = '*'
 
 # If event name contains the word 'Test', review the test activity
-for idx, row in pyxis_report_issues_df.iterrows():
-    if pyxis_report_issues_df.loc[idx, 'Event Status'] != 'Finished':
-        if (findWholeWord('test')(pyxis_report_issues_df.loc[idx,'Name']) != None):
-            pyxis_report_issues_df.loc[idx, '*'] = TEST_RECAP
+for idx, row in Efghi_report_issues_df.iterrows():
+    if Efghi_report_issues_df.loc[idx, 'Event Status'] != 'Finished':
+        if (findWholeWord('test')(Efghi_report_issues_df.loc[idx,'Name']) != None):
+            Efghi_report_issues_df.loc[idx, '*'] = TEST_RECAP
 
 # Set date column to date
 # Format of this column needs to be set at yyyy-dd-mm so that
 # You can properly filter the records by date
-pyxis_report_issues_df['Date'] = pd.to_datetime(pyxis_report_issues_df['Date']).dt.date
+Efghi_report_issues_df['Date'] = pd.to_datetime(Efghi_report_issues_df['Date']).dt.date
 
 # Move the last column indicating next step to be the first column
-cols = list(pyxis_report_issues_df.columns)
+cols = list(Efghi_report_issues_df.columns)
 cols = [cols[-1]] + cols[:-1]
-pyxis_report_issues_df = pyxis_report_issues_df[cols]
+Efghi_report_issues_df = Efghi_report_issues_df[cols]
 
 # Select the columns to be used in the final report
-# pyxis_report_issues_df = pyxis_report_issues_df.iloc[:, np.r_[0:9]]
-
-pyxis_report_issues_df = pyxis_report_issues_df[[
+Efghi_report_issues_df = Efghi_report_issues_df[[
     '*',
     'Date',
     'Name',
@@ -339,13 +329,13 @@ pyxis_report_issues_df = pyxis_report_issues_df[[
     ]].copy()
 
 # Sort by the first column indicating next step
-pyxis_report_issues_df = pyxis_report_issues_df.sort_values(["*", "Date"], ascending = (False, True))
+Efghi_report_issues_df = Efghi_report_issues_df.sort_values(["*", "Date"], ascending = (False, True))
 
 # This file here writes the final issues report
-with pd.ExcelWriter(r'data/Pyxis Report Issues_' + TODAYSTR + '.xlsx') as writer:  # doctest: +SKIP
-    sheet_name = 'Pyxis Report Issues_' + TODAYSTR
+with pd.ExcelWriter(r'data/Efghi Report Issues_' + TODAYSTR + '.xlsx') as writer:  # doctest: +SKIP
+    sheet_name = 'Efghi Report Issues_' + TODAYSTR
     print(sheet_name)
-    pyxis_report_issues_df.to_excel(writer, index=False, startrow = 0, sheet_name=sheet_name)
+    Efghi_report_issues_df.to_excel(writer, index=False, startrow = 0, sheet_name=sheet_name)
 
     workbook  = writer.book
 
@@ -354,10 +344,8 @@ with pd.ExcelWriter(r'data/Pyxis Report Issues_' + TODAYSTR + '.xlsx') as writer
 
     header_format = workbook.add_format({'bold': False, 'text_wrap': False, 'border': 1, 'align': 'center', 'valign': 'left'})
 
-    for col_num, value in enumerate(pyxis_report_issues_df.columns.values):
+    for col_num, value in enumerate(Efghi_report_issues_df.columns.values):
         worksheet_1.write(0, col_num, value, header_format)
 
     worksheet_1.set_column(0, 0, 20)
     worksheet_1.set_default_row(20)
-
-# pyxis_report_issues_df.to_excel(r'tmp/debug.xlsx', index=False)

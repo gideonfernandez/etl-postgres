@@ -10,19 +10,17 @@ from config import *
 """
 Upload backup files to SHAREPOINT
 """
-sharepoint_mmg_url = SHAREPOINT_MMG_URL
+sharepoint_client_url = SHAREPOINT_CLIENT_URL
 sharepoint_base_url = SHAREPOINT_BASE_URL
 sharepoint_subfolder = SHAREPOINT_SUBFOLDER
-# sharepoint_user = MMG_USER
-# sharepoint_password = MMG_PASSWORD
-sharepoint_user = 'gfernandez@montagemarketinggroup.com'
-sharepoint_password = 'gf*2100ea'
+sharepoint_user = SHAREPOINT_USER
+sharepoint_password = SHAREPOINT_PASSWORD
 
 #Database Table Backup SP Locations 
-authcookie = Office365(sharepoint_mmg_url, username=sharepoint_user, password=sharepoint_password).GetCookies()
+authcookie = Office365(sharepoint_client_url, username=sharepoint_user, password=sharepoint_password).GetCookies()
 site = Site(sharepoint_base_url, version=Version.v365, authcookie=authcookie);
-folder_sp_bitly = site.Folder('Shared%20Documents/General/Database/Daily Table Backups/Bitly')
-folder_sp_nn = site.Folder('Shared%20Documents/General/Database/Daily Table Backups/NetworkNinja')
+folder_sp_bitly = FOLDER_SP_BITLY
+folder_sp_nn = FOLDER_SP_NN
 
 """
 SHAREPOINT END
@@ -59,7 +57,7 @@ def backup_nn_table():
         # create a cursor
         cur = conn.cursor()
 
-        outputquery = 'copy mmg.networkninja to stdout with csv header'.format('select * from mmg.networkninja')
+        outputquery = 'copy db_a.network_client to stdout with csv header'.format('select * from db_a.network_client')
 
         timestamped = TIMESTR
         with open(f'data/db/nn_daily_backups/nn_bkp_' + timestamped + '.csv', 'wb') as f:
@@ -71,7 +69,7 @@ def backup_nn_table():
             nn_content = content_file.read()
 
         folder_sp_nn.upload_file(nn_content, nn_filename)
-        print('Uploaded '+ nn_filename + ' to Database > Daily Table Backups > NetworkNinja')
+        print('Uploaded '+ nn_filename + ' to Database > Daily Table Backups > NN')
 
         # close the communication with the PostgreSQL
         cur.close()
@@ -81,7 +79,7 @@ def backup_nn_table():
     finally:
         if conn is not None:
             conn.close()
-            print('Networkninja table backed up')
+            print('network_client table backed up')
 
 def clear_nn_table():
     """ Connect to the PostgreSQL database server """
@@ -99,7 +97,7 @@ def clear_nn_table():
 
         print('Removing NN data')
         cur.execute(
-            'DELETE FROM mmg.networkninja; COMMIT;'
+            'DELETE FROM db_a.network_client; COMMIT;'
             )
 
         # close the communication with the PostgreSQL
@@ -119,13 +117,13 @@ def load_nn_table():
         params = config()
 
         # connect to the PostgreSQL server
-        # print('Connecting to the PostgreSQL database...')
+        print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**params)
 
         # create a cursor
         cur = conn.cursor()
 
-        copy_command = f"COPY mmg.networkninja FROM STDIN CSV HEADER;"
+        copy_command = f"COPY db_a.network_client FROM STDIN CSV HEADER;"
         cur.copy_expert(copy_command, open(r'data/db/db_NN_load.csv', "r"))
         cur.execute('COMMIT;')
 
@@ -146,13 +144,13 @@ def backup_bitly_table():
         params = config()
 
         # connect to the PostgreSQL server
-        # print('Connecting to the PostgreSQL database...')
+        print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**params)
 
         # create a cursor
         cur = conn.cursor()
 
-        outputquery = 'copy mmg.bitly to stdout with csv header'.format('select * from mmg.bitly')
+        outputquery = 'copy db_a.bitly to stdout with csv header'.format('select * from db_a.bitly')
 
         timestamped = TIMESTR
         with open(f'data/db/bitly_daily_backups/bitly_bkp_' + timestamped + '.csv', 'wb') as f:
@@ -184,13 +182,13 @@ def update_bitly_table():
         params = config()
 
         # connect to the PostgreSQL server
-        # print('Connecting to the PostgreSQL database...')
+        print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**params)
 
         # create a cursor
         cur = conn.cursor()
 
-        copy_command = f"COPY mmg.bitly FROM STDIN CSV HEADER;"
+        copy_command = f"COPY db_a.bitly FROM STDIN CSV HEADER;"
         cur.copy_expert(copy_command, open(r'data/db/db_bitly_load.csv', "r"))
         cur.execute('COMMIT;')
 

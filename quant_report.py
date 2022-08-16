@@ -14,7 +14,7 @@ CANCELLED = ['lm cancelled', 'cancelled', 'Cancelled', 'Cancelled Last Minute', 
 
 """
 0 - Pull PRI from SHAREPOINT
-Gets latest pri_auto file from MMG Data Team > Network Ninja > data
+Gets latest pri_auto file
 """
 import os.path
 from office365.runtime.auth.authentication_context import AuthenticationContext
@@ -23,8 +23,8 @@ from office365.sharepoint.files.file import File
 
 sharepoint_base_url = SHAREPOINT_BASE_URL
 sharepoint_subfolder = SHAREPOINT_SUBFOLDER
-sharepoint_user = MMG_USER
-sharepoint_password = MMG_PASSWORD
+sharepoint_user = SHAREPOINT_USER
+sharepoint_password = SHAREPOINT_PASSWORD
 
 # Constructing Details For Authenticating SharePoint
 
@@ -52,7 +52,6 @@ def folder_details(ctx, sharepoint_subfolder):
 file_list = folder_details(ctx, sharepoint_subfolder)
 
 # Printing list of files from sharepoint folder and write to dataframe
-# print(file_list)
 file_list_df = pd.DataFrame([sub.split(",") for sub in file_list], columns=['File', 'Date'])
 
 # Sort dataframe by descending to get the latest file
@@ -63,29 +62,23 @@ pri_filename = file_list_df['File'].iloc[0]
 print(pri_filename)
 
 # Reading File from SharePoint Folder
-sharepoint_file = '/sites/MMGDataTeam/Shared%20Documents/General/Database/Daily Data Sources/NetworkNinja/' + pri_filename
+sharepoint_file = SHAREPOINT_FILE_PATH + pri_filename
 
 file_response = File.open_binary(ctx, sharepoint_file)
 
 # Saving file data directory where quant_report will pull pri data from
-with open(f'data/sharepoint_nn_data/{pri_filename}', 'wb') as output_file:
+with open(f'data/sharepoint_network_data/{pri_filename}', 'wb') as output_file:
     output_file.write(file_response.content)
 
 '''
 1. LOAD PRI (from Sharepoint)
 '''
-# ENTER HERE to use local pri file, otherwise it will use the Sharepoint file
-# for i in glob.glob('data/pri*.csv'):
-#     pri_filename = i
-
-# pri_full_df = pd.read_csv(pri_filename, skiprows=2, thousands=r',')
-
-nn1_full_df = pd.read_csv(r'target_market/build_tm_inputs/nn1_jan1_2017_mar31_2022.csv', thousands=r',')
+nn1_full_df = pd.read_csv(r'legacy_file.csv', thousands=r',')
 nn1_full_df = nn1_full_df[[
     'Event ID',
     ]].copy()
 
-pri_full_df = pd.read_csv(f'data/sharepoint_nn_data/{pri_filename}', skiprows=2, thousands=r',', low_memory=False)
+pri_full_df = pd.read_csv(f'data/sharepoint_network_data/{pri_filename}', skiprows=2, thousands=r',', low_memory=False)
 
 pri_full_df = pri_full_df.merge(nn1_full_df.drop_duplicates(),
     on=['Event ID'], how='left', indicator=True)
@@ -94,39 +87,29 @@ pri_full_df = pri_full_df[pri_full_df['_merge'].isin(['left_only'])]
 
 pri_full_df = pri_full_df.drop(['_merge'], axis=1)
 
-# Filter PRI report by only looking at CPGI events
-NON_CPGI = [
-            'CEP'
-            ,'Comms'
-            ,'DRC'
-            ,'DV'
-            ,'FQHC'
-            ,'HPO'
-            ,'Legislative'
-            ,'NLM'
-            ,'Visibility'
+# Filter PRI report by only looking at certain events
+NON_ABCD = [
+            'GROUP_1'
+            ,'GROUP_2'
+            ,'GROUP_3'
+            ,'GROUP_4'
+            ,'GROUP_5'
+            ,'GROUP_6'
+            ,'GROUP_7'
+            ,'GROUP_8'
+            ,'GROUP_9'
             ]
 
 pri_full_df = pri_full_df.copy()
-# pri_full_df = pri_full_df[~pri_full_df['Partner'].isin(NON_CPGI)]  #Comment out for all partners
 
-# Delete text from NN2.0 Venue Name field
+# Delete text from Venue Name field
 pri_full_df['Venue Name'] = pri_full_df['Venue Name'].str.replace(r" \(you must add id from venues_profiles for this to link\)","", regex=True)
-
-# Set date column to date
-# Format of this column needs to be set at yyyy-dd-mm so that
-# You can properly filter the records by date
-
-# Clean up incorrect date for event ID 16054
-pri_full_df.loc[(pri_full_df['Event ID'] == 16054), 'Date'] = '09/23/2020'
-pri_full_df['Date'] = pd.to_datetime(pri_full_df['Date']).dt.date
 
 '''
 2.  Filter out the data we don't need 
 '''
 # PRI Report
 quant_full_df = pri_full_df.copy()
-# quant_full_df = pri_full_df[~pri_full_df['Event Status'].isin(CANCELLED)]
 
 '''
 CREATE REPORT DATAFRAMES START HERE
@@ -173,7 +156,7 @@ admin_df = approved_df.loc[((approved_df['Event Recap Type Id'] == 8) & (
     (approved_df['Engagement Activity Type'] != 'Earn Media') &
     (approved_df['Engagement Activity Type'] != 'Other - Non-Digital/Non-Event') &
     (approved_df['Engagement Activity Type'] != 'Workshops') &
-    (approved_df['Engagement Activity Type'] != 'CPGI Other') &
+    (approved_df['Engagement Activity Type'] != 'ABCD Other') &
     (approved_df['Engagement Activity Type'] != 'Governance')
     ))]
 admin_df = admin_df.copy()
@@ -202,7 +185,7 @@ admin_nondigital_df['TYPE'] = 'NON-DIGITAL'
 # 2-Admin - In-Person
 admin_inperson_df = approved_df.loc[((approved_df['Event Recap Type Id'] == 8) & (
             (approved_df['Engagement Activity Type'] == 'Workshops') |
-            (approved_df['Engagement Activity Type'] == 'CPGI Other')
+            (approved_df['Engagement Activity Type'] == 'ABCD Other')
             ))]
 admin_inperson_df = admin_inperson_df.copy()
 admin_inperson_df['TYPE'] = 'IN-PERSON'
@@ -504,21 +487,21 @@ final_qnt_report_df['Target Population'] = final_qnt_report_df['Digital Recap | 
                                             final_qnt_report_df['Legacy Recap | Target/Primary Population'])   
 
 final_qnt_report_df['Partners Recapped'] = final_qnt_report_df[[
-    'Partners | Digital - CPGI',
+    'Partners | Digital - ABCD',
     'Partners | Digital - CEP',
     'Partners | Digital - FQHC',
     'Partners | Digital - DV',
-    'Partners | In-Person - CPGI',
+    'Partners | In-Person - ABCD',
     'Partners | In-Person - CEP',
     'Partners | In-Person - DV',
     'Partners | In-Person - HPO',
     'Partners | In-Person - FQHC',
-    'Partners | Hybrid - CPGI',
+    'Partners | Hybrid - ABCD',
     'Partners | Hybrid - CEP',
     'Partners | Hybrid - DV',
     'Partners | Hybrid - HPO',
     'Partners | Hybrid - FQHC',
-    'Partners | NonDig NonEvent - CPGI',
+    'Partners | NonDig NonEvent - ABCD',
     'Partners | NonDig NonEvent - CEP',
     'Partners | NonDig NonEvent - DV',
     'Partners | NonDig NonEvent - HPO',
@@ -550,21 +533,6 @@ final_qnt_report_df['CTA Text'] = final_qnt_report_df[[
     'Hybrid Recap | CTA Text 3',
     'Hybrid Recap | CTA Text 4',
     ]].apply(lambda x: ', '.join(x.dropna()), axis=1)
-
-# Research Facing Field
-# for idx, row in final_qnt_report_df.iterrows():
-#     # If RF1 is not null and RF2 is null, then use RF1
-#     if final_qnt_report_df.loc[idx, 'Research Facing 1'] != ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] == ' ':
-#         final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 1']
-#     # If RF1 is null and RF2 is not null, then use RF2
-#     elif final_qnt_report_df.loc[idx, 'Research Facing 1'] == ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] != ' ':
-#         final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 2']
-#     # If both RF fields are not null then use RF1
-#     elif final_qnt_report_df.loc[idx, 'Research Facing 1'] != ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] != ' ':
-#         final_qnt_report_df.loc[idx, 'Research Facing'] = final_qnt_report_df.loc[idx, 'Research Facing 1']
-#     # If both RF fields are null then null
-#     elif final_qnt_report_df.loc[idx, 'Research Facing 1'] == ' ' and final_qnt_report_df.loc[idx, 'Research Facing 2'] == ' ':
-#         final_qnt_report_df.loc[idx, 'Research Facing'] = ''
 
 # Monthly Summary Reports
 final_qnt_report_df['Accomplishments'] = final_qnt_report_df['Admin Recap | Accomplishments'].fillna(
@@ -612,8 +580,6 @@ final_qnt_report_df = final_qnt_report_df[[
     'Partner',
     'Partners Recapped',
     'Collaboration Partner(s)',
-    # 'NN2 Venue Market',
-    # 'NN2 Consortia Partner Target Market',
     '#-Total Social Media Posts',
     '#-Total Social Media Impressions',
     '#-Total Social Media Engagement',
@@ -635,14 +601,12 @@ final_qnt_report_df = final_qnt_report_df[[
     'Governance Activities Summary',
     'Other notes',
     'Research Facing',
-    # 'CTA',
-    # 'CTA Text',
     ]].copy()
 
 final_qnt_report_df = final_qnt_report_df.sort_values(["TYPE"], ascending = (False))
 
 # This is the final quant report
-with pd.ExcelWriter(r'data/FINAL_Pyxis_Quantitative - MONTH 2022.xlsx') as writer:  # doctest: +SKIP
+with pd.ExcelWriter(r'data/FINAL_Efghi_Quantitative - MONTH 2022.xlsx') as writer:  # doctest: +SKIP
     final_qnt_report_df.to_excel(writer, index=False, startrow = 0, sheet_name = 'Quantitative MMM 1-31 2022')
 
     workbook  = writer.book
@@ -653,9 +617,3 @@ with pd.ExcelWriter(r'data/FINAL_Pyxis_Quantitative - MONTH 2022.xlsx') as write
     header_format = workbook.add_format({'bold': False, 'text_wrap': False, 'fg_color': '#4F81BD', 'color': '#FFFFFF', 'border': 0, 'align': 'center', 'valign': 'center'})
     for col_num, value in enumerate(final_qnt_report_df.columns.values):
         worksheet_1.write(0, col_num, value, header_format)
-
-
-
-
-
-# final_qnt_report_df.to_excel(r'tmp/debug.xlsx', index=False)

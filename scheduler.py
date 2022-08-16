@@ -37,13 +37,13 @@ def job():
     print('Email sent')
 
     print('Date End Time:', datetime.now())
-    print('NetworkNinja & Bitly Jobs COMPLETED. Run time:', datetime.now() - startTime)
+    print('network_table & Bitly Jobs COMPLETED. Run time:', datetime.now() - startTime)
 
 def alerts():
-    print('NN table check...')
+    print('network_table table check...')
     time.sleep(5)
     os.system('python db_check_alerts.py')
-    print('NN table check completed')
+    print('network_table table check completed')
 
 def issues():
     print('Starting weekly issues report...')
@@ -52,11 +52,9 @@ def issues():
     exec(open('email_issues_report.py').read())
     print('Weekly issues report completed')
 
-schedule.every().day.at('11:00').do(job)  #Time in UTC
-schedule.every().day.at('11:15').do(alerts)  #Time in UTC
-schedule.every().friday.at('21:15').do(issues)  #Time in UTC
-
-# schedule.every(15).seconds.do(job)
+schedule.every().day.at('13:00').do(job)  #Time in UTC
+schedule.every().day.at('13:20').do(alerts)  #Time in UTC
+schedule.every().friday.at('22:00').do(issues)  #Time in UTC
 
 while True:
     schedule.run_pending()
